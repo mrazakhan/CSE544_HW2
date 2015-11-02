@@ -25,7 +25,7 @@ public class Catalog {
 	private HashMap<Integer,Table> catalogHashTable;
     public Catalog() {
         // some code goes here
-    	
+    	this.catalogHashTable = new HashMap<Integer, Table>();
     }
 
     /**
@@ -87,9 +87,9 @@ public class Catalog {
         return null;
     }
 
-    public String getPrimaryKey(int tableid) {
+    public String getPrimaryKey(int id) {
         // some code goes here
-        return null;
+    	return this.catalogHashTable.get(id).getPrimaryKeyField();
     }
 
     public Iterator<Integer> tableIdIterator() {
@@ -99,7 +99,7 @@ public class Catalog {
 
     public String getTableName(int id) {
         // some code goes here
-        return null;
+        return this.catalogHashTable.get(id).getName();
     }
     
     /** Delete all tables from the catalog */
