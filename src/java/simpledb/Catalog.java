@@ -27,6 +27,11 @@ public class Catalog {
         // some code goes here
     	this.catalogHashTable = new HashMap<Integer, Table>();
     }
+    
+    public ArrayList<Table> getTables(){
+    	ArrayList<Table> list = new ArrayList<Table>( this.catalogHashTable.values());
+    	return list;
+    }
 
     /**
      * Add a new table to the catalog.
