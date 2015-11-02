@@ -1,12 +1,14 @@
 package simpledb;
 
 public class Table {
-	public Table(String name, String primaryKeyField) {
+	public Table(DbFile dbF,String name, String primaryKeyField) {
 		super();
 		this.name = name;
+		this.setDbFile(dbF);
 		this.primaryKeyField = primaryKeyField;
 	}
 	private String name;
+	private DbFile dbFile;
 	public String getName() {
 		return name;
 	}
@@ -18,6 +20,12 @@ public class Table {
 	}
 	public void setPrimaryKeyField(String primaryKeyField) {
 		this.primaryKeyField = primaryKeyField;
+	}
+	public DbFile getDbFile() {
+		return dbFile;
+	}
+	public void setDbFile(DbFile dbFile) {
+		this.dbFile = dbFile;
 	}
 	private String primaryKeyField;
 	

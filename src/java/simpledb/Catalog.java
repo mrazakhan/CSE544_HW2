@@ -39,6 +39,18 @@ public class Catalog {
      */
     public void addTable(DbFile file, String name, String pkeyField) {
         // some code goes here
+    	//Step 1 Check if the table is already there in the catalog
+    	// Step 2 if step1 returns False then add it
+    	if (!name.equals(null)){
+	    	Integer tableId= file.getId();
+	    	if (catalogHashTable.containsKey(tableId)){
+	    		catalogHashTable.remove(tableId);
+	    	}
+	    	else{
+	    		Table newT= new Table(file, name, pkeyField);
+	    		catalogHashTable.put(tableId, newT);
+	    	}
+    	}
     }
 
     public void addTable(DbFile file, String name) {
@@ -62,7 +74,12 @@ public class Catalog {
      */
     public int getTableId(String name) throws NoSuchElementException {
         // some code goes here
-        return 0;
+    	for (Table table:this.catalogHashTable.values()){
+    		if (table.getName().equals(name))
+    			return table.getDbFile().getId();
+    		
+    	}
+        throw new NoSuchElementException("No such element");
     }
 
     /**
@@ -73,7 +90,10 @@ public class Catalog {
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
         // some code goes here
-        return null;
+        if(catalogHashTable.containsKey(tableid)){
+        	return catalogHashTable.get(tableid).getDbFile().getTupleDesc();
+        }
+        throw new NoSuchElementException("Table not found");
     }
 
     /**
@@ -84,7 +104,10 @@ public class Catalog {
      */
     public DbFile getDatabaseFile(int tableid) throws NoSuchElementException {
         // some code goes here
-        return null;
+    	if(catalogHashTable.containsKey(tableid)){
+        	return catalogHashTable.get(tableid).getDbFile();
+        }
+        throw new NoSuchElementException("Table not found");
     }
 
     public String getPrimaryKey(int id) {
@@ -94,7 +117,7 @@ public class Catalog {
 
     public Iterator<Integer> tableIdIterator() {
         // some code goes here
-        return null;
+        return this.catalogHashTable.keySet().iterator();
     }
 
     public String getTableName(int id) {
@@ -105,6 +128,7 @@ public class Catalog {
     /** Delete all tables from the catalog */
     public void clear() {
         // some code goes here
+    	this.catalogHashTable.clear();
     }
     
     /**
