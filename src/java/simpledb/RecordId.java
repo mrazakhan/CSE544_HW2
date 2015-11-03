@@ -56,7 +56,8 @@ public class RecordId implements Serializable {
         boolean ret=false;
         if (o instanceof RecordId){
         	RecordId passedRecord=(RecordId)o;
-        	if ((this.pid==passedRecord.pid)&&(this.tupleno==passedRecord.tupleno))
+        	if ((this.getPageId().equals(passedRecord.getPageId()))&&
+        			(this.tupleno() ==passedRecord.tupleno() ))
         		ret=true;
         	else
         		ret=false;
