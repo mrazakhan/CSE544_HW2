@@ -69,8 +69,8 @@ public class BufferPool {
     public  Page getPage(TransactionId tid, PageId pid, Permissions perm)
         throws TransactionAbortedException, DbException {
         // some code goes here
-    	if (this.numPages>this.bufferHashMap.size())
-    		throw new DbException( "Required pages greater than the max size");
+    	//if (this.numPages>this.bufferHashMap.size())
+    	//	throw new DbException( "Required pages greater than the max size");
         if (this.bufferHashMap.containsKey(pid))
         	return this.bufferHashMap.get(pid);
         else{
