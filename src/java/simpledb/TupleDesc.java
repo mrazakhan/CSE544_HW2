@@ -138,7 +138,7 @@ public class TupleDesc implements Serializable {
         	if (this.getFieldName(i).equals(name))
         		return i;
         }
-		return -1;
+		throw new NoSuchElementException("Name not found");
         
     }
 
@@ -198,17 +198,26 @@ public class TupleDesc implements Serializable {
     public boolean equals(Object o) {
         // some code goes here
         boolean ret=true;
+        if (o==null)
+        	return false;
+        if (o instanceof TupleDesc){
         TupleDesc other=(TupleDesc)o;
         if (this.getSize()==other.getSize()){
         	for (int i=0;i<this.numFields();i++)
         		if (this.getFieldType(i)!=other.getFieldType(i))
         			return false;
         			
+        	}
+        else
+        	return false;
+        
         }
         else
         	return false;
+        
+        return true;
         	
-        return ret;
+        
         
         
     }
