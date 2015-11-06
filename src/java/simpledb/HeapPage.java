@@ -284,8 +284,8 @@ public class HeapPage implements Page {
      */
     public boolean isSlotUsed(int i) {
         // some code goes here
-    	System.out.println("Header Size"+header.length);
-    	System.out.println("Number of Slots"+this.numSlots);
+    	//System.out.println("Header Size"+header.length);
+    	//System.out.println("Number of Slots"+this.numSlots);
     	if (((i/8)>(this.header.length-1))) return false;
     	
     	byte[] byteInHeader=new byte[]{header[i/8]};
@@ -302,7 +302,7 @@ public class HeapPage implements Page {
     }
 
     /**
-     * @return an iterator over all tuples on this page 
+     * @`xreturn an iterator over all tuples on this page 
      * (calling remove on this iterator throws an UnsupportedOperationException)
      * (note that this iterator shouldn't return tuples in empty slots!)
      */
