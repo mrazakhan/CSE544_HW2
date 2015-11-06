@@ -1,100 +1,105 @@
+
 package simpledb;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.*;
+import java.util.*;
 
 public class HeapFileIterator implements DbFileIterator {
-
-	private Iterator<Tuple> it;
-	private HeapFile heapFile;
-	private TransactionId tid;
-	private int PageNum=0;
-	public HeapFileIterator(HeapFile heapFile, TransactionId tid)
-	{
-		this.heapFile=heapFile;
-		this.tid=tid;
-	}
-	@Override
-	public void open() throws DbException, TransactionAbortedException {
-		// TODO Auto-generated method stub
-		PageNum=0;
-		it=getTuplesFromPage(PageNum).iterator();
-	}
-
-	private List<Tuple> getTuplesFromPage(int pageNo) throws TransactionAbortedException, DbException
-	{
-		HeapPageId hpId = new HeapPageId(heapFile.getId(), pageNo);
-		HeapPage page;
-			page = (HeapPage) Database.getBufferPool().getPage(tid, 
-					hpId, Permissions.READ_ONLY);
-			return Arrays.asList(page.tuples);
-		
-		
-	}
-	@Override
-	public boolean hasNext() throws DbException, TransactionAbortedException {
-		// TODO Auto-generated method stub
-		if (it==null)
-			return false;
-		else if (it.hasNext() ||(this.PageNum<heapFile.numPages()-1)){
-			return true;
-		}
-		else
-			return false;
-		
-	}
-
-	@Override
-	public Tuple next() throws DbException, TransactionAbortedException, NoSuchElementException {
-		// TODO Auto-generated method stub
-		if(it == null){
-            throw new NoSuchElementException("tuple is null");
-        }
         
-        if(it.hasNext()){
-   
-            Tuple t = it.next();
-            if(t==null && (PageNum < heapFile.numPages()-1)) {
-            	//Move to next page
-                PageNum ++;
-                it = getTuplesFromPage(PageNum).iterator();
-                if (it.hasNext())
-                 return it.next();
+        
+        private Iterator<Tuple> iter;
+        private TransactionId tid;
+        
+        private  HeapFile f;
+        private int currentPageNum; 
+        
+        public HeapFileIterator( HeapFile f,TransactionId tid) {
+            this.tid = tid;
+            this.f=f;
+             
+        }
+            
+        @Override
+        public void open() throws DbException, TransactionAbortedException {
+        	currentPageNum = 0;
+            iter = getTuplesFromPage(currentPageNum).iterator();
+        }
+
+        @Override
+        public boolean hasNext() throws DbException, TransactionAbortedException {
+            if( iter == null){
+                return false;
+            }
+            if(iter.hasNext()){
+                return true;
+            } else if (currentPageNum < f.numPages()-1){
+                // if we have more pages to iterate
+                if(getTuplesFromPage(currentPageNum + 1).size() != 0){
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public Tuple next() throws DbException, TransactionAbortedException,
+                NoSuchElementException {
+            //
+            if(iter == null){
+                throw new NoSuchElementException("tuple is null");
+            }
+            
+            if(iter.hasNext()){
+            	//there are tuples available on page
+                Tuple t = iter.next();
+                return t;
+            } else if(!iter.hasNext() && currentPageNum < f.numPages()-1) {
+            	//Get tuples form next page
+            	currentPageNum ++;
+                iter = getTuplesFromPage(currentPageNum).iterator();
+                if (iter.hasNext())
+                 return iter.next();
                 else {
                     throw new NoSuchElementException("No more Tuples");
                 }
-            }
-                else
-                	return t;
-        } else if(!it.hasNext() && (PageNum < heapFile.numPages()-1)) {
-        	//Move to next page
-            PageNum ++;
-            it = getTuplesFromPage(PageNum).iterator();
-            if (it.hasNext())
-             return it.next();
-            else {
+                
+            } else {
+                // no more tuples on current page and no more pages in file
                 throw new NoSuchElementException("No more Tuples");
             }
             
-        } else {
-            // no more tuples on current page and no more pages in file
-            throw new NoSuchElementException("No more Tuples");
         }
-	}
+        //  
+        private List<Tuple> getTuplesFromPage(int pgNum) throws TransactionAbortedException, DbException{
+            
+            PageId pageId = new HeapPageId(f.getId(), pgNum);
+            Page page = Database.getBufferPool().getPage(tid, pageId, Permissions.READ_ONLY);
+                            
+            List<Tuple> tupleList = new ArrayList<Tuple>();
+            
+            // get all tuples from the first page in the file
+            HeapPage hp = (HeapPage)page;
+            Iterator<Tuple> itr = hp.iterator();
+            while(itr.hasNext()){
+                tupleList.add(itr.next());
+            }
+            return  tupleList;
+        }
 
-	@Override
-	public void rewind() throws DbException, TransactionAbortedException {
-		// TODO Auto-generated method stub
-		close();
-		open();
-	}
+        @Override
+        public void rewind() throws DbException, TransactionAbortedException {
+            close();
+            open();
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		it=null;
-	}
+        }
 
-}
+        @Override
+        public void close() {
+        	iter = null;
+
+        }
+
+    }

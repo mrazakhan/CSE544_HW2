@@ -59,9 +59,9 @@ public class Predicate implements Serializable {
     private Field operand;
     public Predicate(int field, Op op, Field operand) {
         // some code goes here
-    	field=field;
-    	op=op;
-    	operand=operand;
+    	this.field=field;
+    	this.op=op;
+    	this.operand=operand;
     }
 
     /**
@@ -103,17 +103,15 @@ public class Predicate implements Serializable {
      */
     public boolean filter(Tuple t) {
         // some code goes here
-        if (t!=null){
-        	
-        	Field f1=t.getField(field);
-        	System.out.println("Field"+f1);
-        	System.out.println("Tuple"+t);
-        	if (f1!=null && operand!=null)
-        		return f1.compare(op, operand);
+    	if (operand==null)
+    		return false;
+        		Field temp=t.getField(field);	
+        		System.out.println("Temp Field"+ temp);
+        		System.out.println("Operand"+ operand);
+        		System.out.println("Op"+ op);
+        		return temp.compare(op, operand);
 		        
-        }
-        return false;
-        
+        		
     }
 
     /**
@@ -122,6 +120,6 @@ public class Predicate implements Serializable {
      */
     public String toString() {
         // some code goes here
-        return "f="+this.field+" op="+op+" operand="+operand;
+        return "f="+this.field+" op="+op.toString()+" operand="+operand;
     }
 }
