@@ -1,6 +1,8 @@
 package simpledb;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * JoinPredicate compares fields of two tuples using a predicate. JoinPredicate
@@ -27,6 +29,7 @@ public class JoinPredicate implements Serializable {
     private int field1;
     private int field2;
     private Predicate.Op op;
+    
     public JoinPredicate(int field1, Predicate.Op op, int field2) {
         // some code goes here
     	this.field1=field1;

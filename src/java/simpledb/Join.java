@@ -23,6 +23,8 @@ public class Join extends Operator {
     private JoinPredicate p;
     private DbIterator child1;
     private DbIterator child2;
+    private Iterator<Tuple> iter;
+    private ArrayList<Tuple> mergedTuples = new ArrayList<Tuple>();
     public Join(JoinPredicate p, DbIterator child1, DbIterator child2) {
         // some code goes here
     	this.p=p;
@@ -70,8 +72,29 @@ public class Join extends Operator {
     	super.open();
     	child1.open();
     	child2.open();
-    	while(this.hasNext())
-        	System.out.println(this.next().toString());
+    	
+    	Tuple left = null;
+        while(child1.hasNext()){
+        		left = child1.next();
+        	Tuple right=null;
+        	while(child2.hasNext()){
+        		
+        			right=child2.next();
+        		
+        		if(p.filter(left, right)){
+        			int i=0;
+        			Tuple joinedTuple = new Tuple(this.getTupleDesc());
+        			for ( i=0;i<left.getTupleDesc().numFields();i++)
+        				joinedTuple.setField(i, left.getField(i));
+        			for (int j=0;j<right.getTupleDesc().numFields();j++)
+        				joinedTuple.setField(i+j, right.getField(j));
+        			mergedTuples.add( joinedTuple);
+        		}
+        			
+        	}
+        	child2.rewind();
+        }
+        iter=mergedTuples.iterator();
     }
 
     public void close() {
@@ -83,8 +106,10 @@ public class Join extends Operator {
 
     public void rewind() throws DbException, TransactionAbortedException {
         // some code goes here
+    	
     	child1.rewind();
     	child2.rewind();
+    	iter = mergedTuples.iterator();
     }
 
     /**
@@ -107,27 +132,11 @@ public class Join extends Operator {
      */
     protected Tuple fetchNext() throws TransactionAbortedException, DbException {
         // some code goes here
-    	Tuple left = null;
-        while(child1.hasNext()){
-        		left = child1.next();
-        	Tuple right=null;
-        	while(child2.hasNext()){
-        		
-        			right=child2.next();
-        		
-        		if(p.filter(left, right)){
-        			int i=0;
-        			Tuple joinedTuple = new Tuple(this.getTupleDesc());
-        			for ( i=0;i<left.getTupleDesc().numFields();i++)
-        				joinedTuple.setField(i, left.getField(i));
-        			for (int j=0;j<right.getTupleDesc().numFields();j++)
-        				joinedTuple.setField(i+j, right.getField(j));
-        			return joinedTuple;
-        		}
-        			
-        	}
-        }
-        return null;
+    	
+        if((iter!=null)&&(iter.hasNext()))
+        	return iter.next();
+        else
+        	return null;
     }
 
     @Override
