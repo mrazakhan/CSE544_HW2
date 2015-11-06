@@ -69,7 +69,7 @@ public class Join extends Operator {
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
         // some code goes here
-    	super.open();
+    	
     	child1.open();
     	child2.open();
     	
@@ -90,11 +90,12 @@ public class Join extends Operator {
         				joinedTuple.setField(i+j, right.getField(j));
         			mergedTuples.add( joinedTuple);
         		}
-        			
+        		
         	}
-        	child2.rewind();
+        	child2.rewind();	
         }
         iter=mergedTuples.iterator();
+    	super.open();
     }
 
     public void close() {
@@ -106,10 +107,7 @@ public class Join extends Operator {
 
     public void rewind() throws DbException, TransactionAbortedException {
         // some code goes here
-    	
-    	child1.rewind();
-    	child2.rewind();
-    	iter = mergedTuples.iterator();
+    	iter=mergedTuples.iterator();
     }
 
     /**
@@ -132,11 +130,11 @@ public class Join extends Operator {
      */
     protected Tuple fetchNext() throws TransactionAbortedException, DbException {
         // some code goes here
-    	
-        if((iter!=null)&&(iter.hasNext()))
-        	return iter.next();
-        else
-        	return null;
+        if (iter != null && iter.hasNext()) {
+            return iter.next();
+        } else
+            return null;
+        
     }
 
     @Override

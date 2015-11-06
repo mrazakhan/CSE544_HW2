@@ -19,6 +19,23 @@ public class HeapFileIterator implements DbFileIterator {
              
         }
             
+        private List<Tuple> getTuplesFromPage(int pgNum) throws TransactionAbortedException, DbException{
+            
+            PageId pageId = new HeapPageId(f.getId(), pgNum);
+            Page page = Database.getBufferPool().getPage(tid, pageId, Permissions.READ_ONLY);
+                            
+            List<Tuple> tupleList = new ArrayList<Tuple>();
+            
+            // get all tuples from the first page in the file
+            HeapPage hp = (HeapPage)page;
+            Iterator<Tuple> itr = hp.iterator();
+            while(itr.hasNext()){
+                tupleList.add(itr.next());
+            }
+            return  tupleList;
+        }
+
+
         @Override
         public void open() throws DbException, TransactionAbortedException {
         	currentPageNum = 0;
@@ -53,10 +70,10 @@ public class HeapFileIterator implements DbFileIterator {
             }
             
             if(iter.hasNext()){
-            	//there are tuples available on page
+            	
                 Tuple t = iter.next();
                 return t;
-            } else if(!iter.hasNext() && currentPageNum < f.numPages()-1) {
+            } else if(!(iter.hasNext()) && (currentPageNum < f.numPages()-1)) {
             	//Get tuples form next page
             	currentPageNum ++;
                 iter = getTuplesFromPage(currentPageNum).iterator();
@@ -72,23 +89,8 @@ public class HeapFileIterator implements DbFileIterator {
             }
             
         }
-        //  
-        private List<Tuple> getTuplesFromPage(int pgNum) throws TransactionAbortedException, DbException{
-            
-            PageId pageId = new HeapPageId(f.getId(), pgNum);
-            Page page = Database.getBufferPool().getPage(tid, pageId, Permissions.READ_ONLY);
-                            
-            List<Tuple> tupleList = new ArrayList<Tuple>();
-            
-            // get all tuples from the first page in the file
-            HeapPage hp = (HeapPage)page;
-            Iterator<Tuple> itr = hp.iterator();
-            while(itr.hasNext()){
-                tupleList.add(itr.next());
-            }
-            return  tupleList;
-        }
-
+          
+        
         @Override
         public void rewind() throws DbException, TransactionAbortedException {
             close();

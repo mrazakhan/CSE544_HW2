@@ -106,9 +106,9 @@ public class Predicate implements Serializable {
     	if (operand==null)
     		return false;
         		Field temp=t.getField(field);	
-        		System.out.println("Temp Field"+ temp);
-        		System.out.println("Operand"+ operand);
-        		System.out.println("Op"+ op);
+        		//System.out.println("Temp Field"+ temp);
+        		//System.out.println("Operand"+ operand);
+        		//System.out.println("Op"+ op);
         		return temp.compare(op, operand);
 		        
         		
