@@ -38,18 +38,12 @@ public class HeapFileIterator implements DbFileIterator {
 		// TODO Auto-generated method stub
 		if (it==null)
 			return false;
-		else if (it.hasNext()){
+		else if (it.hasNext() ||(this.PageNum<heapFile.numPages()-1)){
 			return true;
-		}
-		else if (PageNum<(heapFile.numPages()-1)){
-			if(getTuplesFromPage(PageNum+ 1).size() != 0){
-				return true;
-			}
-			else
-				return false;
 		}
 		else
 			return false;
+		
 	}
 
 	@Override
@@ -62,7 +56,18 @@ public class HeapFileIterator implements DbFileIterator {
         if(it.hasNext()){
    
             Tuple t = it.next();
-            return t;
+            if(t==null && (PageNum < heapFile.numPages()-1)) {
+            	//Move to next page
+                PageNum ++;
+                it = getTuplesFromPage(PageNum).iterator();
+                if (it.hasNext())
+                 return it.next();
+                else {
+                    throw new NoSuchElementException("No more Tuples");
+                }
+            }
+                else
+                	return t;
         } else if(!it.hasNext() && (PageNum < heapFile.numPages()-1)) {
         	//Move to next page
             PageNum ++;

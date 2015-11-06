@@ -20,13 +20,19 @@ public class Join extends Operator {
      * @param child2
      *            Iterator for the right(inner) relation to join
      */
+    private JoinPredicate p;
+    private DbIterator child1;
+    private DbIterator child2;
     public Join(JoinPredicate p, DbIterator child1, DbIterator child2) {
         // some code goes here
+    	p=p;
+    	child1=child1;
+    	child2=child2;
     }
 
     public JoinPredicate getJoinPredicate() {
         // some code goes here
-        return null;
+        return p;
     }
 
     /**
@@ -36,7 +42,7 @@ public class Join extends Operator {
      * */
     public String getJoinField1Name() {
         // some code goes here
-        return null;
+        return child1.getTupleDesc().getFieldName(p.getField1());
     }
 
     /**
@@ -46,7 +52,7 @@ public class Join extends Operator {
      * */
     public String getJoinField2Name() {
         // some code goes here
-        return null;
+        return  child2.getTupleDesc().getFieldName(p.getField2());
     }
 
     /**
@@ -55,20 +61,28 @@ public class Join extends Operator {
      */
     public TupleDesc getTupleDesc() {
         // some code goes here
-        return null;
+        return TupleDesc.merge(child1.getTupleDesc(), child2.getTupleDesc());
     }
 
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
         // some code goes here
+    	super.open();
+    	child1.open();
+    	child2.open();
     }
 
     public void close() {
         // some code goes here
+    	super.close();
+    	child1.close();
+    	child2.close();
     }
 
     public void rewind() throws DbException, TransactionAbortedException {
         // some code goes here
+    	child1.rewind();
+    	child2.rewind();
     }
 
     /**
@@ -97,12 +111,14 @@ public class Join extends Operator {
     @Override
     public DbIterator[] getChildren() {
         // some code goes here
-        return null;
+        return new DbIterator[]{child1, child2};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
         // some code goes here
+    	child1=children[0];
+    	child2=children[1];
     }
 
 }
