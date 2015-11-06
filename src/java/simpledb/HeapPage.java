@@ -284,7 +284,10 @@ public class HeapPage implements Page {
      */
     public boolean isSlotUsed(int i) {
         // some code goes here
-    	if (i>this.numSlots) return false;
+    	System.out.println("Header Size"+header.length);
+    	System.out.println("Number of Slots"+this.numSlots);
+    	if (((i/8)>(this.header.length-1))) return false;
+    	
     	byte[] byteInHeader=new byte[]{header[i/8]};
     	BigInteger temp=new BigInteger(byteInHeader);
     	return temp.testBit(i%8);
