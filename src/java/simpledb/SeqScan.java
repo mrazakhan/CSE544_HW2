@@ -33,9 +33,9 @@ public class SeqScan implements DbIterator {
     private DbFileIterator iter;
     public SeqScan(TransactionId tid, int tableid, String tableAlias) {
         // some code goes here
-    	tId=tid;
-    	tableId=tableid;
-    	tableAlias=tableAlias;
+    	this.tId=tid;
+    	this.tableId=tableid;
+    	this.tableAlias=tableAlias;
     }
 
     /**
@@ -71,8 +71,8 @@ public class SeqScan implements DbIterator {
      */
     public void reset(int tableid, String tableAlias) {
         // some code goes here
-    	tableId=tableid;
-    	tableAlias=tableAlias;
+    	this.tableId=tableid;
+    	this.tableAlias=tableAlias;
     }
 
     public SeqScan(TransactionId tid, int tableid) {

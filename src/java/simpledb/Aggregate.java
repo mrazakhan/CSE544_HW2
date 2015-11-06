@@ -29,8 +29,26 @@ public class Aggregate extends Operator {
      * @param aop
      *            The aggregation operator to use
      */
+    private DbIterator child;
+    private DbIterator aggregateResultChild;
+    private int afield;
+    private int gfield;
+    private Aggregator.Op aop;
+    private Aggregator aggregator;
     public Aggregate(DbIterator child, int afield, int gfield, Aggregator.Op aop) {
 	// some code goes here
+    	this.afield=afield;
+    	this.gfield=gfield;
+    	this.child=child;
+    	this.aop=aop;
+    	
+    	Type groupByFieldType =null;
+    	Type aggFieldType=child.getTupleDesc().getFieldType(afield);
+    	
+    	if (gfield!=Aggregator.NO_GROUPING)
+    		groupByFieldType=child.getTupleDesc().getFieldType(gfield);
+    	
+    	
     }
 
     /**
@@ -40,7 +58,7 @@ public class Aggregate extends Operator {
      * */
     public int groupField() {
 	// some code goes here
-	return -1;
+	return gfield;
     }
 
     /**
@@ -50,7 +68,10 @@ public class Aggregate extends Operator {
      * */
     public String groupFieldName() {
 	// some code goes here
-	return null;
+    	if (gfield==Aggregator.NO_GROUPING)
+    		return null;
+    	else
+    		return this.child.getTupleDesc().getFieldName(this.gfield);
     }
 
     /**
@@ -58,7 +79,7 @@ public class Aggregate extends Operator {
      * */
     public int aggregateField() {
 	// some code goes here
-	return -1;
+	return this.afield;
     }
 
     /**
@@ -67,7 +88,7 @@ public class Aggregate extends Operator {
      * */
     public String aggregateFieldName() {
 	// some code goes here
-	return null;
+	return this.child.getTupleDesc().getFieldName(this.afield);
     }
 
     /**
@@ -75,7 +96,7 @@ public class Aggregate extends Operator {
      * */
     public Aggregator.Op aggregateOp() {
 	// some code goes here
-	return null;
+	return this.aop;
     }
 
     public static String nameOfAggregatorOp(Aggregator.Op aop) {
@@ -85,6 +106,7 @@ public class Aggregate extends Operator {
     public void open() throws NoSuchElementException, DbException,
 	    TransactionAbortedException {
 	// some code goes here
+    	
     }
 
     /**
@@ -101,6 +123,7 @@ public class Aggregate extends Operator {
 
     public void rewind() throws DbException, TransactionAbortedException {
 	// some code goes here
+    	this.child.rewind();
     }
 
     /**
@@ -116,22 +139,24 @@ public class Aggregate extends Operator {
      */
     public TupleDesc getTupleDesc() {
 	// some code goes here
-	return null;
+	return this.child.getTupleDesc();
     }
 
     public void close() {
 	// some code goes here
+    	this.child.close();
     }
 
     @Override
     public DbIterator[] getChildren() {
 	// some code goes here
-	return null;
+	return new DbIterator[]{child};
     }
 
     @Override
     public void setChildren(DbIterator[] children) {
 	// some code goes here
+    	this.child=children[0];
     }
     
 }
