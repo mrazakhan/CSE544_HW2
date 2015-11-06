@@ -112,10 +112,8 @@ public class SeqScan implements DbIterator {
         // some code goes here
     	if (iter==null)
     		return false;
-        if (iter.hasNext())
-        	return true;
-        else
-        	return false;
+    	else
+    		return iter.hasNext();
     }
 
     public Tuple next() throws NoSuchElementException,

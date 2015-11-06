@@ -76,6 +76,7 @@ public class HeapFile implements DbFile {
 			byte[] pageBytes = new byte[BufferPool.PAGE_SIZE];
 			fin.read(pageBytes, 0, BufferPool.PAGE_SIZE);
 			HeapPage pg = new HeapPage((HeapPageId) pid, pageBytes);
+			fin.close();
 			return pg;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
